@@ -276,8 +276,9 @@ Upmpdcli implements an OpenHome Radio service which allows selecting and
 listening to internet radio stations when using an OpenHome-compatible
 Control Point (e.g. Kazoo, Lumin, Bubble UPnP, etc.).
 
-This facility uses Python 2.x, which must be available on the system for
-the radio links to work.
+This facility uses Python 2.x for upmpdcli releases up to 1.2, then Python 3
+for 1.3 and later, and was tested with Python 2.7 and Python 3.5. Older
+Python3 versions may work.
 
 Radio channels can be accessed by using the Control Point application to
 select the _Radio_ OpenHome source.
@@ -723,8 +724,12 @@ This requires the installation of the external *gmusicapi* Python
 package. 
 link:http://unofficial-google-music-api.readthedocs.io/en/latest/usage.html#usage[See the installation notes here].
 
-NOTE: gmusicapi needs Python 2.7.9 or better (e.g. the standard Python
-version on Ubuntu Trusty is too old). Older Python versions *will* crash.
+NOTE: upmpdcli 1.3 and later use Python3 to run the plugins. Please replace
+pip with pip3 when installing gmusicapi.
+
+NOTE: for upmpdcli version 1.2, which uses Python2, gmusicapi needs Python
+2.7.9 or better (e.g. the standard Python version on Ubuntu Trusty is too
+old). Older Python versions *will* crash.
 
 You will need a valid subscription for most functions.
 
@@ -884,7 +889,8 @@ C++11 support, and the development packages for *libupnp* version 1.6,
 
 Also the Python modules for streaming service support use the
 *python-requests* package, so you may need to install it (it is only needed
-at run time). Also *gmusicapi* for Google Music.
+at run time). Also *gmusicapi* for Google Music. Upmpdcli 1.2 needs Python2,
+upmpdcli 1.3 and later need Python3.
 
 If you are using the source from the git repository, you will also need the
 *autoconf*, *automake*, *libtool* trio. Use the +autogen.sh+ script to set
@@ -1089,7 +1095,7 @@ browser. You will need to execute the following steps to set things up:
 - Unzip the file on any Linux machine with a web browser. This will create
   a 'upmpdcli-spotify-authinit' directory. The chosen machine can be the
   host where upmpdcli runs, or not: any Linux machine with a browser will do.
-- Check that the python-requests package is available on the chosen host, or
+- Check that the python3-requests package is available on the chosen host, or
   install it.
 - Run the helper script inside the unzipped directory. Replace 'username'
   with your Spotify user id.
