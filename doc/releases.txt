@@ -1,5 +1,11 @@
 = Upmpdcli release notes
 
+== upmpdcli 1.3.4
+
+- Fix bug in the spotify plugin: would not work if plgproxymethod was set
+  to redirect (which is the default). The plugin should ignore the value of
+  this variable which can only be useful for the other streaming services.
+  
 == upmpdcli 1.3.3
 
 - Fix the radio source on systems with Python3 version older than 3.5
