@@ -1,5 +1,11 @@
 = Upmpdcli release notes
 
+== upmpdcli 1.3.5
+
+- Fix bug in the spotify plugin: would not work if upmpdcli was initially
+  started by root (before switching to the upmpdcli user), which is the
+  default for the packages.
+
 == upmpdcli 1.3.4
 
 - Fix bug in the spotify plugin: would not work if plgproxymethod was set
