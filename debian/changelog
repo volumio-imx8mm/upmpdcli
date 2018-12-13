@@ -1,8 +1,14 @@
+upmpdcli (1.3.8-1~ppaPPAVERS~SERIES1) SERIES; urgency=low
+
+  * cherry-pick kazoo compatibility patch for url-less radios
+  
+ -- Jean-Francois Dockes <jf@dockes.org>  Thi, 13 Dec 2018 12:54:00 +0100
+
 upmpdcli (1.3.7-1~ppaPPAVERS~SERIES1) SERIES; urgency=low
 
   * Add parameter to designate the openssl command to use by OHCredentials
   
- -- Jean-Francois Dockes <jf@dockes.org>  Mon, 12 Dec 2018 10:15:00 +0200
+ -- Jean-Francois Dockes <jf@dockes.org>  Wed, 12 Dec 2018 10:15:00 +0100
 
 upmpdcli (1.3.6-1~ppaPPAVERS~SERIES1) SERIES; urgency=low
 
