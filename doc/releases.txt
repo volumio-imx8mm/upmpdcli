@@ -1,5 +1,12 @@
 = Upmpdcli release notes
 
+== upmpdcli 1.3.8
+- Add parameter to set the name of the openssl command to use. Helps with
+  OHCredentials on jessie where the system command is too old.
+- Small compatibility change for helping Kazoo use our radio list. Better
+  Kazoo compatibility (when switching between radio and playlist) still to
+  come (not merged).
+
 == upmpdcli 1.3.6
 
 - Fix issues in the Credentials service which prevented Tidal and Qobuz

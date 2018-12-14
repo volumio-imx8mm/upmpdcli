@@ -2,7 +2,7 @@ upmpdcli (1.3.8-1~ppaPPAVERS~SERIES1) SERIES; urgency=low
 
   * cherry-pick kazoo compatibility patch for url-less radios
   
- -- Jean-Francois Dockes <jf@dockes.org>  Thi, 13 Dec 2018 12:54:00 +0100
+ -- Jean-Francois Dockes <jf@dockes.org>  Thu, 13 Dec 2018 12:54:00 +0100
 
 upmpdcli (1.3.7-1~ppaPPAVERS~SERIES1) SERIES; urgency=low
 
