@@ -66,7 +66,7 @@ dnl AC_CHECK_LIB([upnp], [UpnpInit], [], AC_MSG_ERROR([libupnp not found]))
 dnl AC_CHECK_LIB([curl], [curl_easy_init], [],AC_MSG_ERROR([libcurl not found]))
 dnl AC_CHECK_LIB([expat], [XML_ParserCreate], [],AC_MSG_ERROR([libexpat not found]))
 
-PKG_CHECK_MODULES([upnpp], [libupnpp], [], [AC_MSG_ERROR([libupnpp])])
+PKG_CHECK_MODULES([upnpp], [libupnpp < 0.17], [], [AC_MSG_ERROR([libupnpp])])
 PKG_CHECK_MODULES([libmpdclient], [libmpdclient], [],
 	[AC_MSG_ERROR([libmpdclient not found])])
 SCCTL_LIBS="$LIBS $upnpp_LIBS $libmpdclient_LIBS"
