@@ -730,12 +730,13 @@ int OHPlaylist::insert(const SoapIncoming& sc, SoapOutgoing& data)
     // Maybe transform a qobuz:// or tidal:// uri if we're doing this
     // forcenocheck is used to disable content format check in this
     // case (there is no valid protocolinfo in general).
-    bool forcenocheck;
+    bool forcenocheck{false};
+#ifdef UPMPD_ENABLE_MEDIASERVER
     if (!morphSpecialUrl(uri, forcenocheck, upnphost)) {
         LOGERR("OHPlaylist::insert: bad uri: " << uri << endl);
         return UPNP_E_INVALID_PARAM;
     }
-        
+#endif
     if (!m_active) {
         m_udev->getohpr()->iSetSourceIndexByName(OHPlaylistSourceName);
         afterid = idFromOldId(afterid);

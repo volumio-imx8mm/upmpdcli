@@ -26,6 +26,29 @@ AC_DEFINE([_FILE_OFFSET_BITS], [64], [File Offset size])
 #### Libraries
 AC_CHECK_LIB([pthread], [pthread_create], [], [])
 
+PKG_CHECK_MODULES([upnpp], [libupnpp], [], [AC_MSG_ERROR([libupnpp not found])])
+PKG_CHECK_MODULES([libmpdclient], [libmpdclient], [], [AC_MSG_ERROR([libmpdclient not found])])
+
+AC_ARG_ENABLE(openhome, AC_HELP_STRING([--disable-openhome],
+              [Disable OpenHome interface.]),
+              enableOPENHOME=$enableval, enableOPENHOME="yes")
+AM_CONDITIONAL(ENABLE_OPENHOME, [test X$enableOPENHOME = Xyes])
+
+AC_ARG_ENABLE(mediaserver, AC_HELP_STRING([--disable-mediaserver],
+              [Disable Media Server function.]),
+              enableMEDIASERVER=$enableval, enableMEDIASERVER="yes")
+AM_CONDITIONAL(ENABLE_MEDIASERVER, [test X$enableMEDIASERVER = Xyes])
+if test X$enableMEDIASERVER = Xyes ; then
+    PKG_CHECK_MODULES([libmicrohttpd], [libmicrohttpd], [],
+        [AC_MSG_ERROR([libmicrohttpd not found])])
+    PKG_CHECK_MODULES([jsoncpp], [jsoncpp], [], [AC_MSG_ERROR([jsoncpp not found])])
+fi
+
+AC_ARG_ENABLE(spotify, AC_HELP_STRING([--disable-spotify],
+              [Disable spotify streaming module.]),
+              enableSpotify=$enableval, enableSpotify="yes")
+AM_CONDITIONAL(ENABLESPOTIFY, [test X$enableMEDIASERVER = Xyes -a X$enableSpotify = Xyes])
+
 AC_ARG_ENABLE(confgui, AC_HELP_STRING([--enable-confgui],
               [Enable QT-based configuration editor GUI.]),
               enableQT=$enableval, enableQT="no")
@@ -48,28 +71,17 @@ if test X$enableQT = Xyes ; then
   AC_SUBST(QMAKE)
 fi
 
-AC_ARG_ENABLE(spotify, AC_HELP_STRING([--disable-spotify],
-              [Disable spotify streaming module.]),
-              enableSpotify=$enableval, enableSpotify="yes")
-AM_CONDITIONAL(ENABLESPOTIFY, [test X$enableSpotify = Xyes])
 
-
-PKG_CHECK_MODULES([upnpp], [libupnpp], [], [AC_MSG_ERROR([libupnpp not found])])
-PKG_CHECK_MODULES([libmpdclient], [libmpdclient], [],
-	[AC_MSG_ERROR([libmpdclient not found])])
-PKG_CHECK_MODULES([libmicrohttpd], [libmicrohttpd], [],
-	[AC_MSG_ERROR([libmicrohttpd not found])])
-PKG_CHECK_MODULES([jsoncpp], [jsoncpp], [], [AC_MSG_ERROR([jsoncpp not found])])
-
-
+### NOTE: the static build does not work currently (07-2022) at least on Ubuntu.
 AC_ARG_ENABLE(staticlink, AC_HELP_STRING([--enable-staticlink],
               [Enable static link by adding the needed libraries.]),
               enableStaticLink=$enableval, enableStaticLink="no")
 if test X$enableStaticLink = Xyes ; then
-    PKG_CHECK_MODULES([curl], [libcurl], [], [AC_MSG_ERROR([libcurl])])
-    PKG_CHECK_MODULES([expat], [expat], [], [AC_MSG_ERROR([libexpat])])
-    PKG_CHECK_MODULES([npupnp], [libnpupnp], [], [AC_MSG_ERROR([libnpupnp])])
-	addstaticlibs="$npupnp_LIBS $curl_LIBS $expat_LIBS $libmicrohttpd_LIBS"
+    PKG_CHECK_MODULES_STATIC([curl], [libcurl], [], [AC_MSG_ERROR([libcurl])])
+    PKG_CHECK_MODULES_STATIC([nettle], [nettle], [], [AC_MSG_ERROR([nettle])])
+    PKG_CHECK_MODULES_STATIC([expat], [expat], [], [AC_MSG_ERROR([libexpat])])
+    PKG_CHECK_MODULES_STATIC([npupnp], [libnpupnp], [], [AC_MSG_ERROR([libnpupnp])])
+	addstaticlibs="$npupnp_LIBS $curl_LIBS $nettle_LIBS $expat_LIBS $libmicrohttpd_LIBS"
 else
 	addstaticlibs=""
 fi

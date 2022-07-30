@@ -39,7 +39,7 @@
 #include "netfetch.h"
 #include "curlfetch.h"
 
-#ifdef ENABLE_SPOTIFY
+#ifdef UPMPD_ENABLE_SPOTIFY
 #include "spotify/spotiproxy.h"
 #endif
 
@@ -83,7 +83,7 @@ public:
         if (g_config->get("plgproxymethod", val) && !val.compare("proxy")) {
             doingproxy = true;
         }
-#ifdef ENABLE_SPOTIFY
+#ifdef UPMPD_ENABLE_SPOTIFY
         if (!plg->getname().compare("spotify")) {
             g_config->get("spotifyuser", user);
             g_config->get("spotifypass", password);
@@ -156,7 +156,7 @@ StreamProxy::UrlTransReturn translateurl(
         StreamProxy::Proxy : StreamProxy::Redirect;
     if (method == StreamProxy::Proxy) {
         if (!realplg->getname().compare("spotify")) {
-#ifdef ENABLE_SPOTIFY
+#ifdef UPMPD_ENABLE_SPOTIFY
             fetcher = std::unique_ptr<NetFetch>(new SpotiFetch(url));
 #else
             LOGERR("Spotify URL but Spotify not supported by build\n");
@@ -236,6 +236,7 @@ bool PlgWithSlave::Internal::maybeStartCmd()
         return false;
     }
 
+#ifdef UPMPD_ENABLE_OPENHOME
     // If the creds have been set in shared mem, login at once, else
     // the plugin will try later from file config data
     LockableShmSeg seg(ohcreds_segpath, ohcreds_segid, ohcreds_segsize);
@@ -259,6 +260,7 @@ bool PlgWithSlave::Internal::maybeStartCmd()
     } else {
         LOGDEB0("PlgWithSlave::maybeStartCmd: shm attach error (probably ok)\n");
     }
+#endif
     return true;
 }
 

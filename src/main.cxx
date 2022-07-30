@@ -41,8 +41,10 @@
 #include "conftree.h"
 #include "mpdcli.hxx"
 #include "upmpd.hxx"
+#ifdef UPMPD_ENABLE_MEDIASERVER
 #include "mediaserver/mediaserver.hxx"
 #include "mediaserver/contentdirectory.hxx"
+#endif
 #include "upmpdutils.hxx"
 #include "pathut.h"
 #include "readfile.h"
@@ -84,8 +86,10 @@ static const char usage[] =
     "-P upport    \t specify port number to be used for UPnP\n"
     "-O 0|1\t decide if we run and export the OpenHome services\n"
     "-v      \tprint version info\n"
+#ifdef UPMPD_ENABLE_MEDIASERVER
     "-m <0|1|2|3|4> media server mode "
     "(default, multidev|only renderer|only media|embedded|multidev)\n"
+#endif
     "\n"
     ;
 
@@ -194,6 +198,8 @@ static void setupsigs()
 }
 
 static UpnpDevice *rootdevice{nullptr};
+   
+#ifdef UPMPD_ENABLE_MEDIASERVER
 static MediaServer *mediaserver{nullptr};
 static std::string uuidMS;
 static std::string fnameMS;
@@ -216,6 +222,7 @@ bool startMediaServer(bool enable)
     }
     return true;
 }
+#endif // UPMPD_ENABLE_MEDIASERVER
 
 int main(int argc, char *argv[])
 {
@@ -239,7 +246,10 @@ int main(int argc, char *argv[])
     bool ownqueue = true;
     bool enableAV = true;
     bool enableOH = true;
+#ifdef UPMPD_ENABLE_MEDIASERVER
     bool enableMediaServer = false;
+    bool inprocessms{false};
+#endif
     bool ohmetapersist = true;
     string upmpdcliuser("upmpdcli");
     string pidfilename("/var/run/upmpdcli.pid");
@@ -249,7 +259,6 @@ int main(int argc, char *argv[])
     unsigned short upport = 0;
     string upnpip;
     int msm = 0;
-    bool inprocessms{false};
     bool msonly{false};
     
     const char *cp;
@@ -313,8 +322,11 @@ int main(int argc, char *argv[])
     if (argc != 0 || msm < 0 || msm > 4) {
         Usage();
     }
+
+#ifdef UPMPD_ENABLE_MEDIASERVER
     MSMode arg_msmode = MSMode(msm);
-    
+#endif    
+
     UpMpd::Options opts;
 
     if (!g_configfilename.empty()) {
@@ -429,6 +441,7 @@ int main(int argc, char *argv[])
     // Server. We let a static ContentDirectory method decide this
     // for us. The way we then implement it depends on the command
     // line option (see the enum comments near the top of the file):
+#ifdef UPMPD_ENABLE_MEDIASERVER
     enableMediaServer = ContentDirectory::mediaServerNeeded();
     switch (arg_msmode) {
     case MSOnly:
@@ -452,13 +465,14 @@ int main(int argc, char *argv[])
         msroot = true;
         break;
     }
-
+    
     // If neither OH nor AV are enabled, run as pure media server. This
     // is another way to do it besides the -m option
     if (!enableOH && !enableAV) {
         msonly = true;
         inprocessms = true;
     }
+#endif
     
     Pidfile pidfile(pidfilename);
 
@@ -703,17 +717,19 @@ int main(int argc, char *argv[])
     }
     hwaddr = mylib->hwaddr();
     
+#ifdef UPMPD_ENABLE_MEDIASERVER
     // Create unique IDs for renderer and possible media server
     if (!g_config || !g_config->get("msfriendlyname", fnameMS)) {
         fnameMS = friendlyname + "-mediaserver";
     }
     uuidMS = LibUPnP::makeDevUUID(fnameMS, hwaddr);
-
+    
     // If running as mediaserver only, make sure we don't conflict
     // with a possible renderer
     if (msonly) {
         pidfilename = pidfilename + "-ms";
     }
+#endif
 
     opts.iconpath = iconpath;
     opts.presentationhtml = presentationhtml;
@@ -771,12 +787,14 @@ int main(int argc, char *argv[])
         }
     }
 
+#ifdef UPMPD_ENABLE_MEDIASERVER
     if (inprocessms && !startMediaServer(enableMediaServer)) {
         LOGERR("Could not start media server\n");
         std::cerr << "Could not start media server\n";
         return 0;
     }
-
+#endif
+    
     if (!msonly) {
         LOGDEB("Renderer event loop" << endl);
         mediarenderer->startnoloops();

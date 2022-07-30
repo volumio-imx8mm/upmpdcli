@@ -299,12 +299,16 @@ bool AVTransport::tpstateMToU(unordered_map<string, string>& status)
             m_nextMetadata.clear();
             m_nextUri.clear();
             m_uri = uri;
-            if (!m_ohp || !m_ohp->cacheFind(uri, m_curMetadata)) {
+#ifdef UPMPD_ENABLE_OPENHOME
+            if (m_ohp && m_ohp->cacheFind(uri, m_curMetadata)) {
+                LOGDEB2("TPSTATEMTOU: FROM OHCACHE\n");
+            } else {
+#endif
                 m_curMetadata = is_song ? didlmake(mpds.currentsong) : "";
                 LOGDEB2("TPSTATEMTOU: FROM MPDS\n");
-            } else {
-                LOGDEB2("TPSTATEMTOU: FROM OHCACHE\n");
+#ifdef UPMPD_ENABLE_OPENHOME
             }
+#endif
         }
     }
     
@@ -412,8 +416,7 @@ void AVTransport::onMpdEvent(const MpdStatus*)
 }
 
 // http://192.168.4.4:8200/MediaItems/246.mp3
-int AVTransport::setAVTransportURI(const SoapIncoming& sc,
-                                        SoapOutgoing& data, bool setnext)
+int AVTransport::setAVTransportURI(const SoapIncoming& sc, SoapOutgoing& data, bool setnext)
 {
 #ifdef NO_SETNEXT
     // pretend not to support setnext:
@@ -429,11 +432,13 @@ int AVTransport::setAVTransportURI(const SoapIncoming& sc,
         return UPNP_E_INVALID_PARAM;
     }
 
+#ifdef UPMPD_ENABLE_MEDIASERVER
     bool forcenocheck;
     if (!morphSpecialUrl(uri, forcenocheck)) {
-        LOGERR("OHPlaylist::insert: bad uri: " << uri << endl);
+        LOGERR("setAVTransportURI: bad uri: " << uri << endl);
         return UPNP_E_INVALID_PARAM;
     }
+#endif
     
     string metadata;
     found = setnext ? sc.get("NextURIMetaData", &metadata) :

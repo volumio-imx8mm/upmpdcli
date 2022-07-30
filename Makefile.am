@@ -31,6 +31,41 @@ endif
 
 CLEANFILES = $(BUILT_SOURCES)
 
+if ENABLE_OPENHOME
+OHSOURCES = \
+     src/ohinfo.cxx \
+     src/ohmetacache.cxx \
+     src/ohplaylist.cxx \
+     src/ohproduct.cxx \
+     src/ohradio.cxx \
+     src/ohreceiver.cxx \
+     src/ohservice.cxx \
+     src/ohsndrcv.cxx \
+     src/ohtime.cxx \
+     src/ohvolume.cxx
+AM_CXXFLAGS += -DUPMPD_ENABLE_OPENHOME
+endif
+
+if ENABLE_MEDIASERVER
+MSSOURCES = \
+     src/mediaserver/cdplugins/cmdtalk.cpp \
+     src/mediaserver/cdplugins/curlfetch.cpp \
+     src/mediaserver/cdplugins/netfetch.cpp \
+     src/mediaserver/cdplugins/plgwithslave.cxx \
+     src/mediaserver/cdplugins/streamproxy.cpp \
+     src/mediaserver/contentdirectory.cxx \
+     src/mediaserver/mediaserver.cxx \
+     src/urlmorph.cxx
+AM_CXXFLAGS += -DUPMPD_ENABLE_MEDIASERVER
+endif
+
+if ENABLE_OPENHOME
+if ENABLE_MEDIASERVER
+OHMSSOURCES = \
+     src/ohcredentials.cxx
+endif
+endif
+
 upmpdcli_SOURCES = \
      src/avtransport.cxx \
      src/avtransport.hxx \
@@ -50,45 +85,27 @@ upmpdcli_SOURCES = \
      src/mediaserver/cdplugins/abuffer.h \
      src/mediaserver/cdplugins/bufxchange.h \
      src/mediaserver/cdplugins/cdplugin.hxx \
-     src/mediaserver/cdplugins/cmdtalk.cpp \
      src/mediaserver/cdplugins/cmdtalk.h \
-     src/mediaserver/cdplugins/curlfetch.cpp \
      src/mediaserver/cdplugins/curlfetch.h \
-     src/mediaserver/cdplugins/netfetch.cpp \
      src/mediaserver/cdplugins/netfetch.h \
-     src/mediaserver/cdplugins/plgwithslave.cxx \
      src/mediaserver/cdplugins/plgwithslave.hxx \
-     src/mediaserver/cdplugins/streamproxy.cpp \
      src/mediaserver/cdplugins/streamproxy.h \
-     src/mediaserver/contentdirectory.cxx \
      src/mediaserver/contentdirectory.hxx \
-     src/mediaserver/mediaserver.cxx \
      src/mediaserver/mediaserver.hxx \
      src/mpdcli.cxx \
      src/mpdcli.hxx \
      src/netcon.cpp \
      src/netcon.h \
-     src/ohcredentials.cxx \
      src/ohcredentials.hxx \
-     src/ohinfo.cxx \
      src/ohinfo.hxx \
-     src/ohmetacache.cxx \
      src/ohmetacache.hxx \
-     src/ohplaylist.cxx \
      src/ohplaylist.hxx \
-     src/ohproduct.cxx \
      src/ohproduct.hxx \
-     src/ohradio.cxx \
      src/ohradio.hxx \
-     src/ohreceiver.cxx \
      src/ohreceiver.hxx \
      src/ohservice.hxx \
-     src/ohservice.cxx \
-     src/ohsndrcv.cxx \
      src/ohsndrcv.hxx \
-     src/ohtime.cxx \
      src/ohtime.hxx \
-     src/ohvolume.cxx \
      src/ohvolume.hxx \
      src/protocolinfo.cxx \
      src/protocolinfo.hxx \
@@ -106,17 +123,20 @@ upmpdcli_SOURCES = \
      src/upmpd.hxx \
      src/upmpdutils.cxx \
      src/upmpdutils.hxx \
-     src/urlmorph.cxx \
      src/urlmorph.hxx \
      src/workqueue.h
 
-upmpdcli_LDADD = $(UPMPDCLI_LIBS)
+upmpdcli_SOURCES += $(OHSOURCES)
+upmpdcli_SOURCES += $(MSSOURCES)
+upmpdcli_SOURCES += $(OHMSSOURCES)
 
 if ENABLESPOTIFY
 upmpdcli_SOURCES += src/mediaserver/cdplugins/spotify/spotiproxy.cpp \
      src/mediaserver/cdplugins/spotify/spotiproxy.h 
-AM_CXXFLAGS += -DENABLE_SPOTIFY
+AM_CXXFLAGS += -DUPMPD_ENABLE_SPOTIFY
 endif
+
+upmpdcli_LDADD = $(UPMPDCLI_LIBS)
 
 scctl_SOURCES = \
     scctl_src/scctl.cpp \

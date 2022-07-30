@@ -135,9 +135,11 @@ void UpMpd::startloops()
     if (m_av) {
         m_av->startloop();
     }
+#ifdef UPMPD_ENABLE_OPENHOME
     if (m_oh) {
         m_oh->startloop();
     }
+#endif
 }
 
 void UpMpd::startnoloops()
@@ -145,12 +147,15 @@ void UpMpd::startnoloops()
     if (m_av) {
         m_av->start();
     }
+#ifdef UPMPD_ENABLE_OPENHOME
     if (m_oh) {
         m_oh->start();
     }
+#endif
 }
 
 
+#ifdef UPMPD_ENABLE_OPENHOME
 UpMpdOpenHome::UpMpdOpenHome(
     UpMpd *upmpd, const std::string& deviceid, const std::string& friendlyname,
     ohProductDesc_t& ohProductDesc)
@@ -161,12 +166,14 @@ UpMpdOpenHome::UpMpdOpenHome(
 
     m_services.push_back(new OHTime(m_upmpd, this));
     m_services.push_back(new OHVolume(m_upmpd, this));
-    
+
+#ifdef UPMPD_ENABLE_MEDIASERVER
     if (!g_lumincompat) {
         m_services.push_back(new OHCredentials(m_upmpd, this,
                                                m_upmpd->getopts().cachedir));
     }
-
+#endif
+    
     m_ohpl = new OHPlaylist(m_upmpd, this, m_upmpd->getopts().ohmetasleep);
     m_services.push_back(m_ohpl);
     m_upmpd->setohpl(m_ohpl);
@@ -215,6 +222,7 @@ UpMpdOpenHome::UpMpdOpenHome(
     m_ohpr = new OHProduct(m_upmpd, this, ohProductDesc, g_lumincompat ? 1 : 2);
     m_services.push_back(m_ohpr);
 }
+#endif
 
 UpMpd::UpMpd(const string& hwaddr, const string& friendlyname,
              ohProductDesc_t& ohProductDesc, MPDCli *mpdcli, Options opts)
@@ -243,6 +251,8 @@ UpMpd::UpMpd(const string& hwaddr, const string& friendlyname,
         m_av->setProductVersion("Upmpdcli", g_upmpdcli_package_version.c_str());
 #endif
     }
+
+#ifdef UPMPD_ENABLE_OPENHOME
     if (opts.options & upmpdDoOH) {
         std::string deviceid =  std::string("uuid:") +
             LibUPnP::makeDevUUID(friendlyname, hwaddr);
@@ -251,6 +261,7 @@ UpMpd::UpMpd(const string& hwaddr, const string& friendlyname,
         m_oh->setProductVersion("Upmpdcli", g_upmpdcli_package_version.c_str());
 #endif
     }
+#endif
 }
 
 UpMpd::~UpMpd()
