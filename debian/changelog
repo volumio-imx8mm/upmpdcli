@@ -1,3 +1,9 @@
+upmpdcli (1.6.3-1~ppaPPAVERS~SERIES1) SERIES; urgency=low
+
+  * Uprcl: properly extract metadata and images from dsf files with id3 tags
+  
+ -- Jean-Francois Dockes <jf@dockes.org>  Tue, 20 Dec 2022 11:10:00 +0100
+
 upmpdcli (1.6.2-1~ppaPPAVERS~SERIES1) SERIES; urgency=low
 
   * Media Server: uprcl, qobuz, upradios: properly implement UPnP Browse(Metadata), for the sole use
